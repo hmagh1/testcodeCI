@@ -23,20 +23,23 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          extensions: pdo_mysql
+          extensions: pdo_mysql, xdebug
 
       - name: Install dependencies
         run: composer install
 
       - name: Run tests with coverage
-        run: vendor/bin/phpunit --coverage-clover=coverage.xml
+        run: XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-clover=coverage.xml
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
-          token: 2d25613e-5cfa-4b66-9718-6119c9586b52
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.xml
           verbose: true
+
+      - name: Debug coverage.xml
+        run: cat coverage.xml | head -n 20
 
       - name: Fail if coverage < 75%
         run: |
@@ -45,12 +48,15 @@ jobs:
             echo "coverage.xml not found"
             exit 1
           fi
-          COVERAGE=$(grep -Po 'line-rate="\K[\d.]+' coverage.xml | head -1)
+          echo "Parsing coverage..."
+          COVERAGE=$(grep -Po 'line-rate="[\d.]+"' coverage.xml | head -1 | grep -Po '[\d.]+')
           echo "Coverage is $COVERAGE"
+
           if [ -z "$COVERAGE" ]; then
             echo "Coverage could not be read"
             exit 1
           fi
+
           if (( $(echo "$COVERAGE < 0.75" | bc -l) )); then
             echo "Coverage below 75%"
             exit 1
