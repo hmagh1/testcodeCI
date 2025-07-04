@@ -27,4 +27,8 @@ switch ($method) {
     echo json_encode(["deleted" => true]);
     break;
 }
+function unusedFunction() {
+    return "This function is not covered by tests.";
+}
+
 ?>
