@@ -12,7 +12,8 @@ function getAllUsers(PDO $pdo): array {
 function insertUser(PDO $pdo, string $name, string $email): int {
     $stmt = $pdo->prepare("INSERT INTO users (name, email) VALUES (?, ?)");
     $stmt->execute([$name, $email]);
-    return (int)$pdo->lastInsertId();
+    return (int)$pdo->lastInsertId();//test
+
 }
 
 function updateUser(PDO $pdo, int $id, string $name, string $email): bool {
