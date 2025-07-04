@@ -1,0 +1,48 @@
+name: CI
+
+on: [pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: crud
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping --silent" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo_mysql
+
+      - name: Install dependencies
+        run: composer install
+
+      - name: Run tests with coverage
+        run: vendor/bin/phpunit --coverage-clover=coverage.xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: 2d25613e-5cfa-4b66-9718-6119c9586b52
+          files: ./coverage.xml
+          verbose: true
+
+      - name: Fail if coverage < 75%
+        run: |
+          COVERAGE=$(grep -Po 'line-rate="\K[\d.]+' coverage.xml | head -1)
+          echo "Coverage is $COVERAGE"
+          if (( $(echo "$COVERAGE < 0.75" | bc -l) )); then
+            echo "Coverage below 75%"
+            exit 1
+          fi
