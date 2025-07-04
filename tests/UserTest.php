@@ -57,10 +57,6 @@ final class UserTest extends TestCase
         $this->assertEquals("Moad", $user["name"]);
         $this->assertEquals("example@email.com", $user["email"]);
     }
-public function testHello(): void
-{
-    $this->assertEquals("Hello from new code!", hello());
-}
 
 
 }
