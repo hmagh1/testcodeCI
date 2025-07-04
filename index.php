@@ -27,4 +27,8 @@ switch ($method) {
     echo json_encode(["deleted" => true]);
     break;
 }
+
+function utilityFunction() {
+  return "I'm not covered by tests.";
+}
 ?>
