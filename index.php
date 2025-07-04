@@ -8,6 +8,9 @@ function getAllUsers(PDO $pdo): array {
     $stmt = $pdo->query("SELECT * FROM users");
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+function userCount(PDO $pdo): int {
+    return (int) $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
+}
 
 function insertUser(PDO $pdo, string $name, string $email): int {
     $stmt = $pdo->prepare("INSERT INTO users (name, email) VALUES (?, ?)");
