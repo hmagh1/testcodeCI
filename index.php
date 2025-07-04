@@ -7,11 +7,13 @@ header("Content-Type: application/json");
 // --------------------------
 
 function formatUser($name, $email) {
+    // Formatte les données utilisateur
     return [
         "name" => ucfirst($name),
         "email" => strtolower($email)
     ];
 }
+
 
 function insertUser(PDO $pdo, $name, $email) {
     $stmt = $pdo->prepare("INSERT INTO users (name, email) VALUES (?, ?)");
