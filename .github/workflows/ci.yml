@@ -48,6 +48,9 @@ jobs:
           files: ./coverage.xml
           verbose: true
 
+      - name: Install bc
+        run: sudo apt-get update && sudo apt-get install -y bc
+
       - name: Show coverage.xml sample (debug)
         run: head -n 20 coverage.xml
 
