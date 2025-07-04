@@ -55,7 +55,7 @@ function handleRequest(PDO $pdo): void {
     }
 }
 
-// Ne s'exécute que pour les requêtes HTTP, pas en test CLI
+
 if (php_sapi_name() !== 'cli') {
     $pdo = connectDB();
     handleRequest($pdo);
