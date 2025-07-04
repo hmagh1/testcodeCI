@@ -20,11 +20,6 @@ switch ($method) {
     $stmt->execute([$data['name'], $data['email'], $data['id']]);
     echo json_encode(["updated" => true]);
     break;
-  case 'DELETE':
-    parse_str(file_get_contents("php://input"), $data);
-    $stmt = $pdo->prepare("DELETE FROM users WHERE id=?");
-    $stmt->execute([$data['id']]);
-    echo json_encode(["deleted" => true]);
-    break;
+  
 }
 ?>
