@@ -29,10 +29,7 @@ function updateUser(PDO $pdo, $id, $name, $email) {
     return $stmt->execute([$name, $email, $id]);
 }
 
-function deleteUser(PDO $pdo, $id) {
-    $stmt = $pdo->prepare("DELETE FROM users WHERE id=?");
-    return $stmt->execute([$id]);
-}
+
 
 // --------------------------
 // Routeur API HTTP
