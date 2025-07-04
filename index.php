@@ -27,4 +27,8 @@ switch ($method) {
     echo json_encode(["deleted" => true]);
     break;
 }
+function unusedHelper() {
+    return "I am not covered by tests.";
+}
+
 ?>
