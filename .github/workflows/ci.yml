@@ -14,16 +14,26 @@ jobs:
           MYSQL_DATABASE: crud
         ports:
           - 3306:3306
-        options: --health-cmd="mysqladmin ping --silent" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Set up PHP
+      - name: Set up PHP with Xdebug
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
           extensions: pdo_mysql, xdebug
+
+      - name: Wait for MySQL to be ready
+        run: |
+          echo "Waiting for MySQL to be ready..."
+          sleep 10
 
       - name: Install dependencies
         run: composer install
@@ -38,26 +48,29 @@ jobs:
           files: ./coverage.xml
           verbose: true
 
-      - name: Debug coverage.xml
-        run: cat coverage.xml | head -n 20
+      - name: Show coverage.xml sample (debug)
+        run: head -n 20 coverage.xml
 
       - name: Fail if coverage < 75%
         run: |
           set -e
           if [ ! -f coverage.xml ]; then
-            echo "coverage.xml not found"
+            echo "❌ coverage.xml not found"
             exit 1
           fi
-          echo "Parsing coverage..."
+          echo "✅ coverage.xml found. Parsing..."
+
           COVERAGE=$(grep -Po 'line-rate="[\d.]+"' coverage.xml | head -1 | grep -Po '[\d.]+')
-          echo "Coverage is $COVERAGE"
+          echo "📊 Coverage is $COVERAGE"
 
           if [ -z "$COVERAGE" ]; then
-            echo "Coverage could not be read"
+            echo "❌ Coverage could not be read"
             exit 1
           fi
 
           if (( $(echo "$COVERAGE < 0.75" | bc -l) )); then
-            echo "Coverage below 75%"
+            echo "❌ Coverage below 75%"
             exit 1
+          else
+            echo "✅ Coverage above threshold"
           fi
