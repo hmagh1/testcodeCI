@@ -9,18 +9,13 @@ final class UserTest extends TestCase
 
     protected function setUp(): void
     {
-        // Utilisé pour GitHub Actions : host=127.0.0.1 et user=root, password=root
         $this->pdo = new PDO("mysql:host=127.0.0.1;dbname=crud", "root", "root");
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        // Crée la table si elle n'existe pas
         $this->pdo->exec("CREATE TABLE IF NOT EXISTS users (
             id INT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(100),
             email VARCHAR(100)
         )");
-
-        // Vide la table avant chaque test
         $this->pdo->exec("DELETE FROM users");
     }
 
@@ -43,7 +38,6 @@ final class UserTest extends TestCase
         $id = insertUser($this->pdo, "Old", "old@example.com");
         $success = updateUser($this->pdo, $id, "New", "new@example.com");
         $this->assertTrue($success);
-
         $users = getAllUsers($this->pdo);
         $this->assertEquals("New", $users[0]["name"]);
     }
@@ -53,7 +47,6 @@ final class UserTest extends TestCase
         $id = insertUser($this->pdo, "ToDelete", "delete@example.com");
         $success = deleteUser($this->pdo, $id);
         $this->assertTrue($success);
-
         $users = getAllUsers($this->pdo);
         $this->assertCount(0, $users);
     }
