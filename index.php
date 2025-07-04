@@ -32,6 +32,10 @@ function formatUser(string $name, string $email): array {
     ];
 }
 
+function hello(): string {
+    return "Hello from new code!";
+}
+
 function handleRequest(PDO $pdo): void {
     header("Content-Type: application/json");
     $method = $_SERVER['REQUEST_METHOD'];
