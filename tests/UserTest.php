@@ -57,4 +57,9 @@ final class UserTest extends TestCase
         $this->assertEquals("Moad", $user["name"]);
         $this->assertEquals("example@email.com", $user["email"]);
     }
+    public function testUserCount(): void
+{
+    $this->assertEquals(0, userCount($this->pdo));
+}
+
 }
