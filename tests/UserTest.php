@@ -9,17 +9,18 @@ final class UserTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->pdo = new PDO("mysql:host=localhost;dbname=crud", "user", "password");
+        // Utilisé pour GitHub Actions : host=127.0.0.1 et user=root, password=root
+        $this->pdo = new PDO("mysql:host=127.0.0.1;dbname=crud", "root", "root");
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        // Création simple de la table si elle n'existe pas
+        // Crée la table si elle n'existe pas
         $this->pdo->exec("CREATE TABLE IF NOT EXISTS users (
             id INT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(100),
             email VARCHAR(100)
         )");
 
-        // Nettoyage de la table avant chaque test
+        // Vide la table avant chaque test
         $this->pdo->exec("DELETE FROM users");
     }
 
