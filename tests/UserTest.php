@@ -10,12 +10,17 @@ final class UserTest extends TestCase
     protected function setUp(): void
     {
         $this->pdo = new PDO("mysql:host=localhost;dbname=crud", "user", "password");
+        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        // Création simple de la table si elle n'existe pas
         $this->pdo->exec("CREATE TABLE IF NOT EXISTS users (
             id INT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(100),
             email VARCHAR(100)
         )");
-        $this->pdo->exec("DELETE FROM users"); // Clean before test
+
+        // Nettoyage de la table avant chaque test
+        $this->pdo->exec("DELETE FROM users");
     }
 
     public function testInsertUser(): void
@@ -26,22 +31,36 @@ final class UserTest extends TestCase
 
     public function testGetAllUsers(): void
     {
-        insertUser($this->pdo, "A", "a@test.com");
+        insertUser($this->pdo, "Alice", "alice@test.com");
         $users = getAllUsers($this->pdo);
         $this->assertGreaterThan(0, count($users));
+        $this->assertEquals("Alice", $users[0]["name"]);
     }
 
     public function testUpdateUser(): void
     {
-        $id = insertUser($this->pdo, "Old", "old@test.com");
-        $success = updateUser($this->pdo, $id, "New", "new@test.com");
+        $id = insertUser($this->pdo, "Old", "old@example.com");
+        $success = updateUser($this->pdo, $id, "New", "new@example.com");
         $this->assertTrue($success);
+
+        $users = getAllUsers($this->pdo);
+        $this->assertEquals("New", $users[0]["name"]);
     }
 
     public function testDeleteUser(): void
     {
-        $id = insertUser($this->pdo, "ToDelete", "delete@test.com");
+        $id = insertUser($this->pdo, "ToDelete", "delete@example.com");
         $success = deleteUser($this->pdo, $id);
         $this->assertTrue($success);
+
+        $users = getAllUsers($this->pdo);
+        $this->assertCount(0, $users);
+    }
+
+    public function testFormatUser(): void
+    {
+        $user = formatUser("moad", "EXAMPLE@EMAIL.COM");
+        $this->assertEquals("Moad", $user["name"]);
+        $this->assertEquals("example@email.com", $user["email"]);
     }
 }
